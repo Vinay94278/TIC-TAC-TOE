@@ -36,12 +36,8 @@ flutter run
 
 ## Screenshots
 
-![Screenshot_1691167161](https://github.com/Vinay94278/TIC-TAC-TOE/assets/106542979/2ffdbb6f-02f3-4317-b288-730a2720ed41)
-![Screenshot_1691167175](https://github.com/Vinay94278/TIC-TAC-TOE/assets/106542979/6fe7592f-ecb5-46df-bc96-1b214997945d)
-![Screenshot_1691167183](https://github.com/Vinay94278/TIC-TAC-TOE/assets/106542979/691eddfe-67d1-439a-a4f6-219cae285949)
-![Screenshot_1691167194](https://github.com/Vinay94278/TIC-TAC-TOE/assets/106542979/7db6d981-e725-4998-b6fb-7c8f8087e874)
-![Screenshot_1691167198](https://github.com/Vinay94278/TIC-TAC-TOE/assets/106542979/d0325563-c933-4388-a947-c5bac22c768f)
-![Screenshot_1691167219](https://github.com/Vinay94278/TIC-TAC-TOE/assets/106542979/15cb8f50-22e2-4e47-9dc0-f6a434154c8f)
+![image (3)](https://github.com/Vinay94278/TIC-TAC-TOE/assets/106542979/18ac29db-16cf-440d-acdd-3566a0b4e04c)
+
 
 ## How to Play
 
