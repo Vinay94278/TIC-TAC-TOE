@@ -1,4 +1,3 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 // import 'package:tic_tac_toe/GamePage.dart';
 import 'package:tic_tac_toe/Pages/vs%20AI/vsai.dart';

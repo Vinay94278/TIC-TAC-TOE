@@ -1,6 +1,5 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:tic_tac_toe/2 Player/GamePage.dart';
+import 'Gamepage.dart';
 
 class Select extends StatefulWidget {
   const Select({super.key});
