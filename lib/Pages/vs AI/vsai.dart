@@ -1,17 +1,20 @@
+// ignore_for_file: must_be_immutable
+
 import 'package:flutter/material.dart';
 
-class MyHomePage extends StatefulWidget {
+class vsAI extends StatefulWidget {
   bool o;
   String s;
-  MyHomePage(this.o, this.s);
+  vsAI(this.o, this.s);
   @override
-  State<MyHomePage> createState() => _MyHomePageState(o, s);
+  State<vsAI> createState() => _vsAIState(o, s);
 }
 
-class _MyHomePageState extends State<MyHomePage> {
+class _vsAIState extends State<vsAI> {
   bool oturn;
+  bool winnerDeclared = false;
   String turn;
-  _MyHomePageState(this.oturn, this.turn);
+  _vsAIState(this.oturn, this.turn);
   List output = ["", "", "", "", "", "", "", "", "", "", "", ""];
   List filepath = [
     "assets/img/Box.png",
@@ -31,6 +34,16 @@ class _MyHomePageState extends State<MyHomePage> {
   int filledbox = 0;
   int xscore = 0;
   int oscore = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    // Add this code to make the AI's first move
+    if (oturn) {
+      // Make AI move (AI's turn)
+      makeAIMove();
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -62,7 +75,7 @@ class _MyHomePageState extends State<MyHomePage> {
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children: [
                         Text(
-                          "PLAYER X SCORE",
+                          "YOUR SCORE (X)",
                           style: TextStyle(
                             fontFamily: "inter",
                             fontSize: 18,
@@ -86,7 +99,7 @@ class _MyHomePageState extends State<MyHomePage> {
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children: [
                         Text(
-                          "PLAYER O SCORE",
+                          "AI SCORE (O)",
                           style: TextStyle(
                             fontFamily: "inter",
                             fontSize: 18,
@@ -157,32 +170,39 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   Clicked(int index) {
-    filledbox += 1;
-    setState(() {
-      if (oturn == true && output[index] == "") {
-        filepath[index] = "assets/img/O.jpg";
-        output[index] = "O";
-      } else if (oturn == false && output[index] == "") {
-        filepath[index] = "assets/img/X.jpg";
-        output[index] = "X";
-      }
-      oturn = !oturn;
-      if (oturn == false) {
-        turn = "X";
-      } else {
-        turn = "O";
-      }
-      Winner();
-    });
+    if (output[index] == "" && draw) {
+      setState(() {
+        if (oturn && output[index] == "") {
+          filepath[index] = "assets/img/O.jpg";
+          output[index] = "O";
+          filledbox += 1;
+        } else if (!oturn && output[index] == "") {
+          filepath[index] = "assets/img/X.jpg";
+          output[index] = "X";
+          filledbox += 1;
+        }
+        oturn = !oturn;
+        if (oturn) {
+          turn = "O";
+          // Make AI move (AI's turn)
+          makeAIMove();
+        } else {
+          turn = "X";
+        }
+        Winner();
+      });
+    }
   }
 
   Winner() {
+    if (winnerDeclared) return;
     //Row
     for (int i = 0; i < 8; i += 3) {
       if (output[i] != "" &&
           output[i] == output[i + 1] &&
           output[i] == output[i + 2]) {
         draw = false;
+        Future.delayed(Duration(seconds: 2));
         WinnerDeclration(output[i]);
       }
     }
@@ -192,25 +212,33 @@ class _MyHomePageState extends State<MyHomePage> {
           output[i] == output[i + 3] &&
           output[i] == output[i + 6]) {
         draw = false;
+        Future.delayed(Duration(seconds: 2));
         WinnerDeclration(output[i]);
       }
     }
     //Diagonal
     if (output[0] != "" && output[0] == output[4] && output[0] == output[8]) {
       draw = false;
+      Future.delayed(Duration(seconds: 2));
       WinnerDeclration(output[0]);
     }
     if (output[2] != "" && output[2] == output[4] && output[2] == output[6]) {
       draw = false;
+      Future.delayed(Duration(seconds: 2));
       WinnerDeclration(output[2]);
     } else if (filledbox == 9 && draw != false) {
+      Future.delayed(Duration(seconds: 2));
       WinnerDeclration("No One");
     }
   }
 
   WinnerDeclration(String winner) {
+    if (winnerDeclared == true) {
+      return;
+    }
     if (winner == "X" || winner == "O") {
       showModalBottomSheet(
+          isDismissible: false,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.vertical(
               top: Radius.circular(30),
@@ -260,7 +288,7 @@ class _MyHomePageState extends State<MyHomePage> {
                             } else if (winner == "O") {
                               oscore += 1;
                             }
-                            ClearGrid(winner);
+                            ClearGrid();
                             Navigator.pop(context);
                           });
                         },
@@ -290,6 +318,7 @@ class _MyHomePageState extends State<MyHomePage> {
           });
     } else if (winner == "No One") {
       showModalBottomSheet(
+          isDismissible: false,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.vertical(
               top: Radius.circular(30),
@@ -334,7 +363,7 @@ class _MyHomePageState extends State<MyHomePage> {
                       child: GestureDetector(
                         onTap: () {
                           setState(() {
-                            ClearGrid("O");
+                            ClearGrid();
                             Navigator.pop(context);
                           });
                         },
@@ -363,15 +392,12 @@ class _MyHomePageState extends State<MyHomePage> {
             );
           });
     }
+    winnerDeclared = true;
   }
 
-  ClearGrid(String winner) {
+  ClearGrid() {
     output = ["", "", "", "", "", "", "", "", "", "", "", ""];
-    if (winner == "X") {
-      oturn = false;
-    } else if (winner == "O") {
-      oturn = true;
-    }
+    oturn = true;
     filepath = [
       "assets/img/Box.png",
       "assets/img/Box.png",
@@ -387,7 +413,111 @@ class _MyHomePageState extends State<MyHomePage> {
       "assets/img/Box.png"
     ];
     filledbox = 0;
-    turn = winner;
+    turn = "O";
     draw = true;
+    winnerDeclared = false;
+    if (oturn) {
+      // Make AI move (AI's turn)
+      makeAIMove();
+    }
+  }
+
+  // New method to make the AI's move using the Minimax algorithm
+  void makeAIMove() {
+    if (!draw || winnerDeclared == true)
+      return; // Stop making moves if there's a winner
+
+    int bestScore = -9999;
+    int bestMove = -1;
+
+    for (int i = 0; i < 9; i++) {
+      if (output[i] == "") {
+        output[i] = "O";
+        int score = minimax(output, 0, false);
+        output[i] = "";
+        if (score > bestScore) {
+          bestScore = score;
+          bestMove = i;
+        }
+      }
+    }
+
+    if (bestMove != -1) {
+      Clicked(bestMove);
+    }
+  }
+
+  bool checkforwinmark(String mark) {
+    // Check rows for a win
+    for (int i = 0; i < 9; i += 3) {
+      if (output[i] == mark && output[i + 1] == mark && output[i + 2] == mark) {
+        return true;
+      }
+    }
+
+    // Check columns for a win
+    for (int i = 0; i < 3; i++) {
+      if (output[i] == mark && output[i + 3] == mark && output[i + 6] == mark) {
+        return true;
+      }
+    }
+
+    // Check diagonals for a win
+    if (output[0] == mark && output[4] == mark && output[8] == mark) {
+      return true;
+    }
+    if (output[2] == mark && output[4] == mark && output[6] == mark) {
+      return true;
+    }
+
+    return false;
+  }
+
+  bool checkfordraw() {
+    for (String item in output) {
+      if (item == "") {
+        return false; // There's an empty cell, so the game is not a draw.
+      }
+    }
+    return true; // All cells are filled, and no player has won, so it's a draw.
+  }
+
+  // Minimax algorithm to calculate the best move
+  int minimax(List board, int depth, bool isMaximizing) {
+    if (checkforwinmark("O")) {
+      return 10;
+    } else if (checkforwinmark("X")) {
+      return -10;
+    } else if (checkfordraw()) {
+      return 0;
+    }
+
+    if (isMaximizing) {
+      int bestScore = -1000;
+      for (int i = 0; i < 9; i++) {
+        if (board[i] == "") {
+          board[i] = "O";
+          int score = minimax(board, depth + 1, false);
+          board[i] = "";
+          if (score > bestScore) {
+            bestScore = score;
+          }
+        }
+      }
+      return bestScore;
+    } else {
+      int bestScore = 1000;
+      for (int i = 0; i < 9; i++) {
+        if (board[i] == "") {
+          board[i] = "X";
+          int score = minimax(board, depth + 1, true);
+          board[i] = "";
+          if (score < bestScore) {
+            bestScore = score;
+          }
+        }
+      }
+      return bestScore;
+    }
   }
 }
